@@ -1,0 +1,2 @@
+TEST = False
+DEBUG = False
