@@ -1,7 +1,6 @@
 # Packet breakdown referenced from:
 # https://github.com/snipem/go-gt7-telemetry/blob/main/lib/gt7data.go
-
-packet_position = {
+packet = {
     # [type (format character), start address, end address (+1)]
     'magic': ['i',0x0,0x4],
     'position_x': ['f',0x4,0x8],
@@ -36,4 +35,18 @@ packet_position = {
     'lap_total': ['h',0x76,0x78],
     'best_lap': ['i',0x78,0x70],
     'last_lap': ['i',0x7C,0x70]
+}
+
+tel_data = {
+    'rpm':0.0,
+    'speed':0.0,
+    'fuel_lvl':0.0,
+    'fuel_cap':0.0
+}
+
+decrypted_sample = {
+    'rpm':0.0,
+    'mps':0.0,
+    'fuel_lvl':0.0,
+    'fuel_cap':0.0
 }

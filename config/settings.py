@@ -1,2 +1,3 @@
-TEST = False
-DEBUG = False
+TEST = True
+DEBUG = True
+RX_TIMEOUT = 2

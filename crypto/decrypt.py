@@ -2,11 +2,16 @@
 # https://github.com/lmirel/mfc/blob/master/clients/gt7racedata.py
 
 from pure_salsa20 import salsa20_xor
+from config import settings
 
 KEY = b"Simulator Interface Packet GT7 ver 0.0"
 MAGIC = 0x47375330
 
 def decrypt (data):
+    
+    if settings.TEST == True:
+        return data
+
     oiv = data[0x40:0x44]
     iv1 = int.from_bytes(oiv, byteorder='little')
     iv2 = iv1 ^ 0xDEADBEAF

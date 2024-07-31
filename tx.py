@@ -10,7 +10,7 @@ if settings.DEBUG:
 else:
     log.basicConfig(stream=sys.stderr, level=log.INFO)
 
-def ping():
+def call():
     call = "Hello"
 
     # Create socket
@@ -21,7 +21,7 @@ def ping():
     
     # Send message via UDP packet
     try:
-        sock.sendto(call.encode(), (UDP_IP, udp.GT7_PORT_TX))
+        sock.sendto(call.encode(), (UDP_IP, udp.GT7_PORT_TX if settings.TEST is False else udp.GT7_PORT_RX))
     except socket.error as message:
         log.error("Unable to send message to " + UDP_IP \
                         + " at port " + str(udp.GT7_PORT_TX)\
