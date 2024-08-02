@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import time
-import rx
-from config import formats
+import rx, gui_pyside6
+from config import formats, settings
 
 if __name__ == '__main__':
 
@@ -12,14 +12,28 @@ if __name__ == '__main__':
     shared_data.update(formats.tel_data)
 
     # Add Continue flag
-    shared_data['continue'] = True
-    
-    p = mp.Process(target=rx.listen, args=(shared_data,lock))
-    p.start()
-    time.sleep(1)
+    shared_data['continue'] = True if settings.START_ON_LAUNCH else False
 
-    shared_data['continue'] = False
-    p.join()
+    # Add Stop flag
+    shared_data['stop'] = False
+    
+    # Start the receiving process
+    p_rx = mp.Process(target=rx.listen, args=(shared_data,lock))
+    p_rx.start()
+
+    # Start the GUI process
+    p_disp = mp.Process(target=gui_pyside6.display, args=(shared_data,lock))
+    p_disp.start()
+
+    # Stop monitoring
+    #time.sleep(10)
+    #shared_data['continue'] = False
+
+    # Wait for receiving process to finish
+    p_rx.join()
+
+    # Wait for GUI process to finish
+    p_disp.join()
 
     print(shared_data)
 

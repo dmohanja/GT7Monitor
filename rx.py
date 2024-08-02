@@ -1,5 +1,4 @@
 import socket, sys, struct, time
-import multiprocessing as mp
 import logging as log
 from config import formats, udp, settings
 from crypto import decrypt
@@ -32,27 +31,29 @@ def update_shared_data(data, shared_data, lock):
         log.debug("speed: " + f'{speed:.1f}' + "km/h")
 
         # Update shared data
-        lock.acquire()
+        locked = lock.acquire()
         try:
-            shared_data['rpm'] = rpm
-            shared_data['speed'] = speed
-            shared_data['fuel_lvl'] = fuel_lvl
-            shared_data['fuel_cap'] = fuel_cap
+            if locked:
+                shared_data['rpm'] = rpm
+                shared_data['speed'] = speed
+                shared_data['fuel_lvl'] = fuel_lvl
+                shared_data['fuel_cap'] = fuel_cap
         finally:
             lock.release()
 
     else:
-        lock.acquire()
+        locked = lock.acquire()
         try:
-            # TODO: test some time information here
-            shared_data['rpm'] = 123.0
-            shared_data['speed'] = 456.0
-            shared_data['fuel_lvl'] = 12.0
-            shared_data['fuel_cap'] = 34.0
-            log.debug(shared_data['rpm'])
-            log.debug(shared_data['speed'])
-            log.debug(shared_data['fuel_lvl'])
-            log.debug(shared_data['fuel_cap'])
+            if locked:
+                # TODO: test some time formats here
+                shared_data['rpm'] = 123.0
+                shared_data['speed'] = 456.0
+                shared_data['fuel_lvl'] = 12.0
+                shared_data['fuel_cap'] = 34.0
+                log.debug(shared_data['rpm'])
+                log.debug(shared_data['speed'])
+                log.debug(shared_data['fuel_lvl'])
+                log.debug(shared_data['fuel_cap'])
         finally:
             lock.release()
 
@@ -77,43 +78,37 @@ def listen(shared_data,lock):
     # Read to file continuously
     log.info("Starting to listen for UDP packets from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
 
-    if settings.TEST:
-        f = open("recvdat.txt", "w")
-
     tx.call()
+    packet_count = 0
 
-    while shared_data['continue']:
-        try:
-            data, addr = sock.recvfrom(4096)
-        except:
-            continue
-        data = decrypt.decrypt(data)
+    while True:
+        if shared_data['continue']:
+            try:
+                data, addr = sock.recvfrom(4096)
+            except:
+                continue
+            data = decrypt.decrypt(data)
 
-        if len(data) > 0x40:
-            log.debug("Received packet from " + str(addr) + ", with this data: " + str(data))
+            if len(data) > 0x40:
+                log.debug("Received packet from " + str(addr) + ", with this data: " + str(data))
 
-            # Update everything
-            update_shared_data(data, shared_data, lock)
+                # Update everything
+                update_shared_data(data, shared_data, lock)
 
-            time.sleep(1)
-            tx.call()
-            #break
-        
-        elif settings.TEST:
-            f.write(str(bytes(data)))
-            f.write("\n\n")
-            update_shared_data(data, shared_data, lock)
+                #time.sleep(1)
+                if packet_count > 300:
+                    tx.call()
+                    packet_count = 0
+                    data = {}
+                else:
+                    packet_count = packet_count + 1
+            
+            elif settings.TEST:
+                time.sleep(1)
+                tx.call()
+                update_shared_data(data, shared_data, lock)
+            else:
+                log.error("Insufficient data received")
         else:
-            log.error("Insufficient data received")
+            time.sleep(0.5)
 
-    if settings.TEST:
-        f.close()
-
-def start(lock, data):
-    # Start listening with new subprocess
-    log.info("Starting to listen for UDP packets from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
-
-def stop(lock, data):
-    # Stop listening and kill subprocess
-    
-    log.info("Stopped listening for UDP packets from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))

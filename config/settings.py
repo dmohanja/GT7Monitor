@@ -1,3 +1,4 @@
-TEST = True
-DEBUG = True
+TEST = False
+DEBUG = False
 RX_TIMEOUT = 2
+START_ON_LAUNCH = False
