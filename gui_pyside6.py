@@ -98,7 +98,6 @@ class MainWindow(QtWidgets.QWidget):
             if locked:
                 if self.started:
                     self.rpm_value.display(f'{shared_data['rpm']:6.1f}')
-                    print(f'{shared_data['rpm']:5.1f}')
                     self.speed_value.display(f'{shared_data['speed']:4.1f}')
                     shared_data['continue'] = True
                 else:

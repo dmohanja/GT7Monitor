@@ -46,14 +46,21 @@ def update_shared_data(data, shared_data, lock):
         try:
             if locked:
                 # TODO: test some time formats here
-                shared_data['rpm'] = 123.0
-                shared_data['speed'] = 456.0
-                shared_data['fuel_lvl'] = 12.0
-                shared_data['fuel_cap'] = 34.0
+                if shared_data['rpm'] < 12000.0:
+                    shared_data['rpm'] += 10.0
+                else:
+                    shared_data['rpm'] = 0.0
+                if shared_data['speed'] < 500.0:
+                    shared_data['speed'] += 0.1
+                else:
+                    shared_data['speed'] = 0.0
+                if shared_data['fuel_lvl'] > 0:
+                    shared_data['fuel_lvl'] -= 0.1
+                else:
+                    shared_data['fuel_lvl'] = 100
                 log.debug(shared_data['rpm'])
                 log.debug(shared_data['speed'])
                 log.debug(shared_data['fuel_lvl'])
-                log.debug(shared_data['fuel_cap'])
         finally:
             lock.release()
 
@@ -104,7 +111,7 @@ def listen(shared_data,lock):
                     packet_count = packet_count + 1
             
             elif settings.TEST:
-                time.sleep(1)
+                time.sleep(0.1)
                 tx.call()
                 update_shared_data(data, shared_data, lock)
             else:
