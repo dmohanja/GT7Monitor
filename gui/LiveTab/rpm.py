@@ -19,6 +19,7 @@ class RpmGroup(QtWidgets.QGroupBox):
         # Define frames for rpm bars
         self.gauge = QtWidgets.QGraphicsScene()
         self.gauge_view = QtWidgets.QGraphicsView()
+        self.gauge_view.setInteractive(False)
         self.gauge_view.setScene(self.gauge)
         self.bar_count = settings.RPM_BAR_COUNT
         #self.rpm_max = max
