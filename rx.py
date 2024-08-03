@@ -20,12 +20,15 @@ def update_shared_data(data, shared_data, lock):
         fuel_lvl_info = formats.packet.get("fuel_lvl")
         fuel_cap_info = formats.packet.get("fuel_cap")
         mps_info = formats.packet.get("mps")
+        gear_info = formats.packet.get("gear")
 
         # Get and interpret data from incoming data
         rpm = struct.unpack(rpm_info[0],(data[rpm_info[1]:rpm_info[2]]))[0]
         fuel_lvl = struct.unpack(fuel_lvl_info[0],(data[fuel_lvl_info[1]:fuel_lvl_info[2]]))[0]
         fuel_cap = struct.unpack(fuel_cap_info[0],(data[fuel_cap_info[1]:fuel_cap_info[2]]))[0]
         speed = struct.unpack(mps_info[0],(data[mps_info[1]:mps_info[2]]))[0] * 3.6
+        gear = struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0] & 0xF
+        suggested_gear = (struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0] & 0xF0) >> 4
 
         log.debug("engine_rpm: " + str(rpm))
         log.debug("speed: " + f'{speed:.1f}' + "km/h")
@@ -38,6 +41,8 @@ def update_shared_data(data, shared_data, lock):
                 shared_data['speed'] = speed
                 shared_data['fuel_lvl'] = fuel_lvl
                 shared_data['fuel_cap'] = fuel_cap
+                shared_data['gear'] = gear
+                shared_data['suggested_gear'] = suggested_gear
         finally:
             lock.release()
 
@@ -58,6 +63,10 @@ def update_shared_data(data, shared_data, lock):
                     shared_data['fuel_lvl'] -= 0.1
                 else:
                     shared_data['fuel_lvl'] = 100
+                if shared_data['gear'] < 10:
+                    shared_data['gear'] += 1
+                else:
+                    shared_data['gear'] = 0
                 log.debug(shared_data['rpm'])
                 log.debug(shared_data['speed'])
                 log.debug(shared_data['fuel_lvl'])
