@@ -95,6 +95,8 @@ packet = {
 
 tel_data = {
     'rpm':0.0,
+    'rpm_redline':0,
+    'rpm_limiter':0,
     'speed':0.0,
     'fuel_lvl':0.0,
     'fuel_cap':0.0,

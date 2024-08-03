@@ -39,6 +39,9 @@ class MainWindow(QtWidgets.QWidget):
         # Connect start/stop button signal/slot
         self.start_stop_button.clicked.connect(self.start_stop)
 
+        # Zero everything
+        self.zero_data()
+
     # Start/stop slot
     @QtCore.Slot()
     def start_stop(self):
@@ -57,7 +60,7 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.rpm_group.update(shared_data['rpm'])
+                    self.rpm_group.update(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
                     self.speed_group.update(shared_data['speed'])
                     self.gear_group.update(shared_data['gear'])
                     self.fuel_group.update(shared_data['fuel_lvl'])
@@ -69,7 +72,7 @@ class MainWindow(QtWidgets.QWidget):
     
     # Zero all data
     def zero_data(self):
-        self.rpm_group.update(0)
+        self.rpm_group.update(0,0,0)
         self.speed_group.update(0.0)
         self.gear_group.update(0)
         self.fuel_group.update(0.0)

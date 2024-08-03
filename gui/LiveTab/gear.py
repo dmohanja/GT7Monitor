@@ -23,4 +23,4 @@ class GearGroup(QtWidgets.QGroupBox):
         self.setLayout(self.box)
 
     def update(self,gear):
-        self.value.display('n' if gear == 0 else gear)
+        self.value.display('-' if gear == 0 else gear)

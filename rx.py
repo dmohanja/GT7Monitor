@@ -17,6 +17,8 @@ def update_shared_data(data, shared_data, lock):
     if not settings.TEST:
         # Get indexing info from packet dictionary
         rpm_info = formats.packet.get("engine_rpm")
+        rpm_redline_info = formats.packet.get("rpm_redline")
+        rpm_limiter_info = formats.packet.get("rpm_limiter")
         fuel_lvl_info = formats.packet.get("fuel_lvl")
         fuel_cap_info = formats.packet.get("fuel_cap")
         mps_info = formats.packet.get("mps")
@@ -24,11 +26,13 @@ def update_shared_data(data, shared_data, lock):
 
         # Get and interpret data from incoming data
         rpm = struct.unpack(rpm_info[0],(data[rpm_info[1]:rpm_info[2]]))[0]
+        rpm_redline = struct.unpack(rpm_redline_info[0],(data[rpm_redline_info[1]:rpm_redline_info[2]]))[0]
+        rpm_limiter = struct.unpack(rpm_limiter_info[0],(data[rpm_limiter_info[1]:rpm_limiter_info[2]]))[0]
         fuel_lvl = struct.unpack(fuel_lvl_info[0],(data[fuel_lvl_info[1]:fuel_lvl_info[2]]))[0]
         fuel_cap = struct.unpack(fuel_cap_info[0],(data[fuel_cap_info[1]:fuel_cap_info[2]]))[0]
         speed = struct.unpack(mps_info[0],(data[mps_info[1]:mps_info[2]]))[0] * 3.6
-        gear = struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0] & 0xF
-        suggested_gear = (struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0] & 0xF0) >> 4
+        gear = int.from_bytes(struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0], signed=False) & 0xF
+        suggested_gear = (int.from_bytes(struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0], signed=False) & 0xF0) >> 4
 
         log.debug("engine_rpm: " + str(rpm))
         log.debug("speed: " + f'{speed:.1f}' + "km/h")
@@ -38,6 +42,8 @@ def update_shared_data(data, shared_data, lock):
         try:
             if locked:
                 shared_data['rpm'] = rpm
+                shared_data['rpm_redline'] = rpm_redline
+                shared_data['rpm_limiter'] = rpm_limiter
                 shared_data['speed'] = speed
                 shared_data['fuel_lvl'] = fuel_lvl
                 shared_data['fuel_cap'] = fuel_cap
@@ -67,6 +73,9 @@ def update_shared_data(data, shared_data, lock):
                     shared_data['gear'] += 1
                 else:
                     shared_data['gear'] = 0
+                # No loop for these parameters
+                shared_data['rpm_redline'] = 10000
+                shared_data['rpm_limiter'] = 12000
                 log.debug(shared_data['rpm'])
                 log.debug(shared_data['speed'])
                 log.debug(shared_data['fuel_lvl'])
@@ -112,7 +121,7 @@ def listen(shared_data,lock):
                 update_shared_data(data, shared_data, lock)
 
                 #time.sleep(1)
-                if packet_count > 300:
+                if packet_count > 800:
                     tx.call()
                     packet_count = 0
                     data = {}
