@@ -1,7 +1,6 @@
-import sys, time, threading
-import logging as log
 from config import formats, settings
 from PySide6 import QtCore, QtWidgets, QtGui
+from gui.LiveTab import rpm, speed, gear, fuel
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -17,57 +16,25 @@ class MainWindow(QtWidgets.QWidget):
         self.started = True if settings.START_ON_LAUNCH else False
         self.start_stop_button = QtWidgets.QPushButton("Stop Tracking" if self.started else "Start Tracking")
 
-        # Define information text
-        self.car_text   = QtWidgets.QLabel("TEST CAR",   alignment=(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop))
-        self.track_text = QtWidgets.QLabel("TEST TRACK", alignment=(QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop))
-
-        # Define speed and RPM group boxes
-        self.speed_group = QtWidgets.QGroupBox()
-        self.rpm_group   = QtWidgets.QGroupBox()
-        self.speed_group.setTitle("SPEED")
-        self.rpm_group.setTitle("RPM")
-
-        # Define RPM 'progress bar'
-        self.rpm_bar = QtWidgets.QProgressBar()
-
-        # Define speed and RPM digital displays
-        self.rpm_value = QtWidgets.QLCDNumber()
-        self.speed_value = QtWidgets.QLCDNumber()
-
-        self.rpm_value.setDigitCount(7)
-        self.rpm_value.setSmallDecimalPoint(True)
-        self.rpm_value.setMinimumHeight(150)
-        self.rpm_value.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
-        self.rpm_value.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
-
-        self.rpm_value.setDigitCount(5)
-        self.rpm_value.setSmallDecimalPoint(True)
-        self.speed_value.setMinimumHeight(150)
-        self.speed_value.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
-        self.speed_value.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
-
-        # Define grids for group boxes
-        self.rpm_box = QtWidgets.QVBoxLayout()
-        self.rpm_box.addWidget(self.rpm_value)
-        self.speed_box = QtWidgets.QVBoxLayout()
-        self.speed_box.addWidget(self.speed_value)
-
-        # Add speed and rpm boxes to group
-        self.speed_group.setLayout(self.speed_box)
-        self.rpm_group.setLayout(self.rpm_box)
+        # Initialize speed, rpm, gear and fuel groups
+        self.speed_group = speed.SpeedGroup()
+        self.rpm_group = rpm.RpmGroup()
+        self.gear_group = gear.GearGroup()
+        self.fuel_group = fuel.FuelGroup()
 
         # Add groups to grid
-        self.speed_rpm_grid = QtWidgets.QGridLayout()
-        self.speed_rpm_grid.addWidget(self.rpm_group,0,0)
-        self.speed_rpm_grid.addWidget(self.speed_group,0,1)
-        self.speed_rpm_grid.setColumnStretch(0,6)
-        self.speed_rpm_grid.setColumnStretch(1,7)
-
+        self.grid = QtWidgets.QGridLayout()
+        #self.speed_rpm_grid.addWidget(self.rpm_group,0,0)
+        self.grid.addWidget(self.rpm_group,1,0)
+        self.grid.addWidget(self.speed_group,1,1)
+        self.grid.addWidget(self.gear_group,0,0)
+        self.grid.addWidget(self.fuel_group,0,1)
+        self.grid.setColumnStretch(0,1)
+        self.grid.setColumnStretch(1,1)
+        
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addWidget(self.start_stop_button)
-        self.layout.addWidget(self.car_text)
-        self.layout.addWidget(self.track_text)
-        self.layout.addLayout(self.speed_rpm_grid)
+        self.layout.addLayout(self.grid)
 
         # Connect start/stop button signal/slot
         self.start_stop_button.clicked.connect(self.start_stop)
@@ -90,8 +57,10 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.rpm_value.display(f'{shared_data['rpm']:6.1f}')
-                    self.speed_value.display(f'{shared_data['speed']:4.1f}')
+                    self.rpm_group.update(shared_data['rpm'])
+                    self.speed_group.update(shared_data['speed'])
+                    self.gear_group.update(shared_data['gear'])
+                    self.fuel_group.update(shared_data['fuel_lvl'])
                     shared_data['continue'] = True
                 else:
                     shared_data['continue'] = False
@@ -100,5 +69,7 @@ class MainWindow(QtWidgets.QWidget):
     
     # Zero all data
     def zero_data(self):
-        self.rpm_value.display(f'0.0')
-        self.speed_value.display(f'0.0')
+        self.rpm_group.update(0)
+        self.speed_group.update(0.0)
+        self.gear_group.update(0)
+        self.fuel_group.update(0.0)

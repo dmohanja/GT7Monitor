@@ -47,7 +47,7 @@ def update_shared_data(data, shared_data, lock):
             if locked:
                 # TODO: test some time formats here
                 if shared_data['rpm'] < 12000.0:
-                    shared_data['rpm'] += 10.0
+                    shared_data['rpm'] += 100.0
                 else:
                     shared_data['rpm'] = 0.0
                 if shared_data['speed'] < 500.0:

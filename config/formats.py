@@ -41,7 +41,8 @@ tel_data = {
     'rpm':0.0,
     'speed':0.0,
     'fuel_lvl':0.0,
-    'fuel_cap':0.0
+    'fuel_cap':0.0,
+    'gear':0,
 }
 
 decrypted_sample = {
