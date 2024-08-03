@@ -124,7 +124,11 @@ def display(shared_data,lock):
     t_loop.start()
 
     app.exec()
+
+    # GUI has quit. Set shared_data['stop'] to True to tell everything else to exit
+    shared_data['stop'] = True
     
+    # Wait for loop to exit
     t_loop.join()
 
 def loop(shared_data,lock,widget):
@@ -132,7 +136,7 @@ def loop(shared_data,lock,widget):
     log.debug("display, outside loop: shared_data.rpm: " + str(shared_data['rpm']))
     log.debug("display, outside loop: shared_data.speed: " + str(shared_data['speed']))
 
-    while True:
+    while not shared_data['stop']:
         log.debug("display: shared_data.continue: " + str(shared_data['continue']))
         log.debug("display: shared_data.rpm: " + str(shared_data['rpm']))
         log.debug("display: shared_data.speed: " + str(shared_data['speed']))

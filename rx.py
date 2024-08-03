@@ -88,7 +88,7 @@ def listen(shared_data,lock):
     tx.call()
     packet_count = 0
 
-    while True:
+    while not shared_data['stop']:
         if shared_data['continue']:
             try:
                 data, addr = sock.recvfrom(4096)
