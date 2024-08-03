@@ -1,7 +1,7 @@
 import multiprocessing as mp
 import logging as log
 import sys
-import rx, gui_pyside6
+import rx, gui.display as display
 from config import formats, settings
 
 if __name__ == '__main__':
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     p_rx.start()
 
     # Start the GUI process
-    p_disp = mp.Process(target=gui_pyside6.display, args=(shared_data,lock))
+    p_disp = mp.Process(target=display.display, args=(shared_data,lock))
     p_disp.start()
 
     # Wait for GUI process to finish
