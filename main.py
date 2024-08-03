@@ -28,13 +28,9 @@ if __name__ == '__main__':
     p_rx.start()
 
     # Start the GUI process
-    p_disp = mp.Process(target=display.display, args=(shared_data,lock))
-    p_disp.start()
+    display.display(shared_data,lock)
 
-    # Wait for GUI process to finish
-    p_disp.join()
-
-    # Wait for comms process to finish
+    # GUI must have exited, wait for comms process to finish
     p_rx.join()
 
     log.debug(shared_data)
