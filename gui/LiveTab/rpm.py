@@ -25,10 +25,14 @@ class RpmGroup(QtWidgets.QGroupBox):
         #self.rpm_redline = redline
         #self.increment = self.rpm_max / self.bar_count
         self.bars = []
+        self.grey_brush = QtGui.QBrush(QtCore.Qt.darkGray)
         self.white_brush = QtGui.QBrush(QtCore.Qt.white)
         self.red_brush = QtGui.QBrush(QtCore.Qt.red)
+        bar_width = 160 / settings.RPM_BAR_COUNT
+        bar_height = 30
+        bar_gap = 2
         for i in range(0,self.bar_count):
-            self.bars.append(self.gauge.addRect((i*20)+(i*2),0,20,20,brush=self.white_brush))
+            self.bars.append(self.gauge.addRect((i*bar_width)+(i*bar_gap),0,bar_width,bar_height,brush=self.grey_brush))
         
         QtWidgets.QGraphicsRectItem()
 
@@ -52,8 +56,8 @@ class RpmGroup(QtWidgets.QGroupBox):
 
         for i in range(0,self.bar_count):
             if i * increment < rpm:
-                self.bars[i].setVisible(True)
+                self.bars[i].setBrush(self.white_brush)
                 if i * increment > redline:
                     self.bars[i].setBrush(self.red_brush)
             else:
-                self.bars[i].setVisible(False)
+                self.bars[i].setBrush(self.grey_brush)
