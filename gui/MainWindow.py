@@ -1,6 +1,7 @@
 from config import formats, settings
 from PySide6 import QtCore, QtWidgets, QtGui
 from gui.LiveTab import rpm, speed, gear, fuel
+from gui import SimState
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self, shared_data, lock):
@@ -15,6 +16,11 @@ class MainWindow(QtWidgets.QWidget):
         # Define start/stop button
         self.started = True if settings.START_ON_LAUNCH else False
         self.start_stop_button = QtWidgets.QPushButton("Stop Tracking" if self.started else "Start Tracking")
+        self.start_stop_button.setMinimumHeight(35)
+        self.start_stop_button.setMaximumHeight(35)
+
+        # Initialize sim state label
+        self.sim_state = SimState.SimState()
 
         # Initialize speed, rpm, gear and fuel groups
         self.speed_group = speed.SpeedGroup()
@@ -36,7 +42,6 @@ class MainWindow(QtWidgets.QWidget):
         self.r_info_grid.setRowStretch(0,1)
         self.r_info_grid.setRowStretch(1,3)
 
-
         # Add l/r info grids to main info grid
         self.info_grid = QtWidgets.QGridLayout()
         self.info_grid.addLayout(self.l_info_grid,0,0)
@@ -44,11 +49,12 @@ class MainWindow(QtWidgets.QWidget):
         self.info_grid.setColumnStretch(0,1)
         self.info_grid.setColumnStretch(1,1)
 
-        # Add buttons to grid
+        # Add button(s) and sim state to grid
         self.button_grid = QtWidgets.QGridLayout()
-        self.button_grid.addWidget(self.start_stop_button,0,0)
+        self.button_grid.addWidget(self.sim_state,0,0)
+        self.button_grid.addWidget(self.start_stop_button,0,1)
 
-        # Add grids to main layout grid
+        # Add grids to main VBox layout
         self.layout = QtWidgets.QVBoxLayout(self)
         self.layout.addLayout(self.info_grid)
         self.layout.addLayout(self.button_grid)
@@ -117,7 +123,7 @@ class MainWindow(QtWidgets.QWidget):
                 if self.started:
                     self.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
                     self.gear_group.update(shared_data['gear'],shared_data['suggested_gear'])
-                    
+                    self.sim_state.update(shared_data['flags'])
                     # Only the 5fps update function will set 'continue' to True/False
                     shared_data['continue'] = True
                 else:

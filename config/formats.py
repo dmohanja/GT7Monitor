@@ -102,4 +102,5 @@ tel_data = {
     'fuel_cap':0.0,
     'gear':0,
     'suggested_gear':0,
+    'flags':0,
 }
