@@ -53,16 +53,43 @@ class MainWindow(QtWidgets.QWidget):
             self.zero_data()
             self.started = False
 
-    # Update all data
-    def update_data(self,shared_data,lock):
+    # Update data (expected to be called every ~0.1 secs)
+    def update_10fps(self,shared_data,lock):
         # Get lock
         locked = lock.acquire(timeout=0.05)
         try:
             if locked:
                 if self.started:
-                    self.rpm_group.update(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
+                    self.rpm_group.update_value(shared_data['rpm'])
                     self.speed_group.update(shared_data['speed'])
+                    shared_data['continue'] = True
+                else:
+                    shared_data['continue'] = False
+        finally:
+            lock.release()
+
+    # Update data (expected to be called every ~0.2 secs)
+    def update_5fps(self,shared_data,lock):
+        # Get lock
+        locked = lock.acquire(timeout=0.05)
+        try:
+            if locked:
+                if self.started:
+                    self.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
                     self.gear_group.update(shared_data['gear'])
+                    shared_data['continue'] = True
+                else:
+                    shared_data['continue'] = False
+        finally:
+            lock.release()
+
+    # Update data (expected to be called every ~1 sec)
+    def update_1fps(self,shared_data,lock):
+        # Get lock
+        locked = lock.acquire(timeout=0.05)
+        try:
+            if locked:
+                if self.started:
                     self.fuel_group.update(shared_data['fuel_lvl'])
                     shared_data['continue'] = True
                 else:
@@ -72,7 +99,8 @@ class MainWindow(QtWidgets.QWidget):
     
     # Zero all data
     def zero_data(self):
-        self.rpm_group.update(0,0,0)
+        self.rpm_group.update_value(0)
+        self.rpm_group.update_gauge(0,0,0)
         self.speed_group.update(0.0)
         self.gear_group.update(0)
         self.fuel_group.update(0.0)

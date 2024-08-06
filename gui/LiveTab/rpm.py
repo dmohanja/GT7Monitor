@@ -49,10 +49,10 @@ class RpmGroup(QtWidgets.QGroupBox):
         self.box.addLayout(self.grid)
         self.setLayout(self.box)
     
-    def update(self, rpm, redline, limiter):
-        
+    def update_value(self, rpm):
         self.value.display(f'{rpm:6.1f}')
-        
+
+    def update_gauge(self, rpm, redline, limiter):
         increment = limiter / self.bar_count
 
         for i in range(0,self.bar_count):
