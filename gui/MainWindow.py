@@ -31,10 +31,12 @@ class MainWindow(QtWidgets.QWidget):
         self.grid.addWidget(self.fuel_group,0,1)
         self.grid.setColumnStretch(0,1)
         self.grid.setColumnStretch(1,1)
+        self.grid.setRowStretch(0,2)
+        self.grid.setRowStretch(1,1)
         
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addWidget(self.start_stop_button)
         self.layout.addLayout(self.grid)
+        self.layout.addWidget(self.start_stop_button)
 
         # Connect start/stop button signal/slot
         self.start_stop_button.clicked.connect(self.start_stop)
