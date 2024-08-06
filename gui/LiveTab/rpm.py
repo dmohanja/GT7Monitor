@@ -15,6 +15,7 @@ class RpmGroup(QtWidgets.QGroupBox):
         self.value.setMinimumHeight(70)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
+        self.value.setStyleSheet("border-style: none;")
 
         # Define frames for rpm bars
         self.gauge = QtWidgets.QGraphicsScene()

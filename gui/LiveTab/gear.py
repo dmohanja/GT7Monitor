@@ -17,12 +17,14 @@ class GearGroup(QtWidgets.QGroupBox):
         self.value.setMinimumHeight(140)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
+        self.value.setStyleSheet("border-style: none;")
 
         self.suggested.setDigitCount(2)
         self.suggested.setSmallDecimalPoint(False)
         self.suggested.setMinimumHeight(70)
         self.suggested.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
         self.suggested.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
+        self.suggested.setStyleSheet("border-style: none;")
         palette = self.suggested.palette()
         palette.setColor(palette.ColorRole.WindowText, QtGui.QColor(255, 0, 0))
         self.suggested.setPalette(palette)
@@ -44,5 +46,5 @@ class GearGroup(QtWidgets.QGroupBox):
 
     def update(self,gear,suggested):
         self.value.display('-' if gear == 0 else gear)
-        self.suggested.display('-' if gear == suggested or suggested == 15 else suggested)
+        self.suggested.display('' if gear == suggested or suggested == 15 else suggested)
         
