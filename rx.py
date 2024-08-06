@@ -30,7 +30,7 @@ def update_shared_data(data, shared_data, lock):
         rpm_limiter = struct.unpack(rpm_limiter_info[0],(data[rpm_limiter_info[1]:rpm_limiter_info[2]]))[0]
         fuel_lvl = struct.unpack(fuel_lvl_info[0],(data[fuel_lvl_info[1]:fuel_lvl_info[2]]))[0]
         fuel_cap = struct.unpack(fuel_cap_info[0],(data[fuel_cap_info[1]:fuel_cap_info[2]]))[0]
-        speed = struct.unpack(mps_info[0],(data[mps_info[1]:mps_info[2]]))[0] * 3.6
+        speed = struct.unpack(mps_info[0],(data[mps_info[1]:mps_info[2]]))[0]
         gear = int.from_bytes(struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0], signed=False) & 0xF
         suggested_gear = (int.from_bytes(struct.unpack(gear_info[0],(data[gear_info[1]:gear_info[2]]))[0], signed=False) & 0xF0) >> 4
 
