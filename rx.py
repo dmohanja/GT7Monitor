@@ -76,6 +76,7 @@ def update_shared_data(data, shared_data, lock):
                 # No loop for these parameters
                 shared_data['rpm_redline'] = 10000
                 shared_data['rpm_limiter'] = 12000
+                shared_data['fuel_cap'] = 100
                 log.debug(shared_data['rpm'])
                 log.debug(shared_data['speed'])
                 log.debug(shared_data['fuel_lvl'])

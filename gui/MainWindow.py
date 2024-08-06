@@ -42,15 +42,18 @@ class MainWindow(QtWidgets.QWidget):
         self.start_stop_button.clicked.connect(self.start_stop)
 
         # Create QTimers for each update period
-        self.timer_10fps = QtCore.QTimer()
-        self.timer_10fps.setInterval(100)
-        self.timer_10fps.timeout.connect(lambda: self.update_10fps(shared_data, lock))
-        self.timer_5fps = QtCore.QTimer()
-        self.timer_5fps.setInterval(200)
-        self.timer_5fps.timeout.connect(lambda: self.update_5fps(shared_data, lock))
-        self.timer_1fps = QtCore.QTimer()
-        self.timer_1fps.setInterval(1000)
-        self.timer_1fps.timeout.connect(lambda: self.update_1fps(shared_data, lock))
+        self.timer_100ms = QtCore.QTimer()
+        self.timer_100ms.setInterval(100)
+        self.timer_100ms.timeout.connect(lambda: self.update_100ms(shared_data, lock))
+        self.timer_200ms = QtCore.QTimer()
+        self.timer_200ms.setInterval(200)
+        self.timer_200ms.timeout.connect(lambda: self.update_200ms(shared_data, lock))
+        self.timer_1000ms = QtCore.QTimer()
+        self.timer_1000ms.setInterval(1000)
+        self.timer_1000ms.timeout.connect(lambda: self.update_1000ms(shared_data, lock))
+        self.timer_3000ms = QtCore.QTimer()
+        self.timer_3000ms.setInterval(3000)
+        self.timer_3000ms.timeout.connect(lambda: self.update_3000ms(shared_data, lock))
 
         # Zero everything
         self.zero_data()
@@ -63,21 +66,21 @@ class MainWindow(QtWidgets.QWidget):
             self.started = True
 
             # Start all update timers
-            self.timer_10fps.start()
-            self.timer_5fps.start()
-            self.timer_1fps.start()
+            self.timer_100ms.start()
+            self.timer_200ms.start()
+            self.timer_1000ms.start()
         else:
             self.start_stop_button.setText("Start Tracking")
             self.zero_data()
             self.started = False
 
             # Stop all update timers
-            self.timer_10fps.stop()
-            self.timer_5fps.stop()
-            self.timer_1fps.stop()
+            self.timer_100ms.stop()
+            self.timer_200ms.stop()
+            self.timer_1000ms.stop()
 
     # Update data (expected to be called every ~0.1 secs)
-    def update_10fps(self,shared_data,lock):
+    def update_100ms(self,shared_data,lock):
         # Get lock
         locked = lock.acquire(timeout=0.05)
         try:
@@ -89,7 +92,7 @@ class MainWindow(QtWidgets.QWidget):
             lock.release()
 
     # Update data (expected to be called every ~0.2 secs)
-    def update_5fps(self,shared_data,lock):
+    def update_200ms(self,shared_data,lock):
         # Get lock
         locked = lock.acquire(timeout=0.05)
         try:
@@ -106,15 +109,19 @@ class MainWindow(QtWidgets.QWidget):
             lock.release()
 
     # Update data (expected to be called every ~1 sec)
-    def update_1fps(self,shared_data,lock):
+    def update_1000ms(self,shared_data,lock):
         # Get lock
         locked = lock.acquire(timeout=0.05)
         try:
             if locked:
                 if self.started:
-                    self.fuel_group.update(shared_data['fuel_lvl'])
+                    self.fuel_group.update(shared_data['fuel_lvl'],shared_data['fuel_cap'])
         finally:
             lock.release()
+    
+        # Update data (expected to be called every ~3 secs)
+    def update_3000ms(self,shared_data,lock):
+        pass
     
     # Zero all data
     def zero_data(self):
@@ -122,4 +129,4 @@ class MainWindow(QtWidgets.QWidget):
         self.rpm_group.update_gauge(0,0,0)
         self.speed_group.update(0.0)
         self.gear_group.update(0,0)
-        self.fuel_group.update(0.0)
+        self.fuel_group.update(0.0,0.0)
