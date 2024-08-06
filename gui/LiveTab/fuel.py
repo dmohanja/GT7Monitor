@@ -1,4 +1,3 @@
-import statistics as stats
 from config import formats, settings
 from PySide6 import QtCore, QtWidgets, QtGui
 
@@ -107,7 +106,7 @@ class FuelGroup(QtWidgets.QGroupBox):
         self.flow[0] = self.last_fuel - fuel
         self.last_fuel = fuel
 
-        flow = stats.mean([self.flow[0], self.flow[1], self.flow[2]])
+        flow = (self.flow[0] + self.flow[1] + self.flow[2]) / 3.0
         # Only display if result is positive
         if flow >= 0:
             self.consumption.display(f'{flow:4.1f}')
