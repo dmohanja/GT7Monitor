@@ -3,7 +3,7 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from gui.LiveTab import rpm, speed, gear, fuel
 
 class MainWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, shared_data, lock):
         super().__init__()
 
         global data
@@ -39,6 +39,17 @@ class MainWindow(QtWidgets.QWidget):
         # Connect start/stop button signal/slot
         self.start_stop_button.clicked.connect(self.start_stop)
 
+        # Create QTimers for each update period
+        self.timer_10fps = QtCore.QTimer()
+        self.timer_10fps.setInterval(100)
+        self.timer_10fps.timeout.connect(lambda: self.update_10fps(shared_data, lock))
+        self.timer_5fps = QtCore.QTimer()
+        self.timer_5fps.setInterval(200)
+        self.timer_5fps.timeout.connect(lambda: self.update_5fps(shared_data, lock))
+        self.timer_1fps = QtCore.QTimer()
+        self.timer_1fps.setInterval(1000)
+        self.timer_1fps.timeout.connect(lambda: self.update_1fps(shared_data, lock))
+
         # Zero everything
         self.zero_data()
 
@@ -48,10 +59,20 @@ class MainWindow(QtWidgets.QWidget):
         if not self.started:
             self.start_stop_button.setText("Stop Tracking")
             self.started = True
+
+            # Start all update timers
+            self.timer_10fps.start()
+            self.timer_5fps.start()
+            self.timer_1fps.start()
         else:
             self.start_stop_button.setText("Start Tracking")
             self.zero_data()
             self.started = False
+
+            # Stop all update timers
+            self.timer_10fps.stop()
+            self.timer_5fps.stop()
+            self.timer_1fps.stop()
 
     # Update data (expected to be called every ~0.1 secs)
     def update_10fps(self,shared_data,lock):
@@ -62,9 +83,6 @@ class MainWindow(QtWidgets.QWidget):
                 if self.started:
                     self.rpm_group.update_value(shared_data['rpm'])
                     self.speed_group.update(shared_data['speed'])
-                    shared_data['continue'] = True
-                else:
-                    shared_data['continue'] = False
         finally:
             lock.release()
 
@@ -77,6 +95,8 @@ class MainWindow(QtWidgets.QWidget):
                 if self.started:
                     self.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
                     self.gear_group.update(shared_data['gear'])
+                    
+                    # Only the 5fps update function will set 'continue' to True/False
                     shared_data['continue'] = True
                 else:
                     shared_data['continue'] = False
@@ -91,9 +111,6 @@ class MainWindow(QtWidgets.QWidget):
             if locked:
                 if self.started:
                     self.fuel_group.update(shared_data['fuel_lvl'])
-                    shared_data['continue'] = True
-                else:
-                    shared_data['continue'] = False
         finally:
             lock.release()
     
