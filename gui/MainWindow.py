@@ -94,7 +94,7 @@ class MainWindow(QtWidgets.QWidget):
             if locked:
                 if self.started:
                     self.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
-                    self.gear_group.update(shared_data['gear'])
+                    self.gear_group.update(shared_data['gear'],shared_data['suggested_gear'])
                     
                     # Only the 5fps update function will set 'continue' to True/False
                     shared_data['continue'] = True
@@ -119,5 +119,5 @@ class MainWindow(QtWidgets.QWidget):
         self.rpm_group.update_value(0)
         self.rpm_group.update_gauge(0,0,0)
         self.speed_group.update(0.0)
-        self.gear_group.update(0)
+        self.gear_group.update(0,0)
         self.fuel_group.update(0.0)
