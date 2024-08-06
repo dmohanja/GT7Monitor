@@ -69,6 +69,7 @@ class MainWindow(QtWidgets.QWidget):
             self.timer_100ms.start()
             self.timer_200ms.start()
             self.timer_1000ms.start()
+            self.timer_3000ms.start()
         else:
             self.start_stop_button.setText("Start Tracking")
             self.zero_data()
@@ -78,6 +79,7 @@ class MainWindow(QtWidgets.QWidget):
             self.timer_100ms.stop()
             self.timer_200ms.stop()
             self.timer_1000ms.stop()
+            self.timer_3000ms.start()
 
     # Update data (expected to be called every ~0.1 secs)
     def update_100ms(self,shared_data,lock):
@@ -115,13 +117,20 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.fuel_group.update(shared_data['fuel_lvl'],shared_data['fuel_cap'])
+                    self.fuel_group.update_value(shared_data['fuel_lvl'],shared_data['fuel_cap'])
         finally:
             lock.release()
     
         # Update data (expected to be called every ~3 secs)
     def update_3000ms(self,shared_data,lock):
-        pass
+        # Get lock
+        locked = lock.acquire(timeout=0.05)
+        try:
+            if locked:
+                if self.started:
+                    self.fuel_group.update_consumption(shared_data['fuel_lvl'])
+        finally:
+            lock.release()
     
     # Zero all data
     def zero_data(self):
@@ -129,4 +138,5 @@ class MainWindow(QtWidgets.QWidget):
         self.rpm_group.update_gauge(0,0,0)
         self.speed_group.update(0.0)
         self.gear_group.update(0,0)
-        self.fuel_group.update(0.0,0.0)
+        self.fuel_group.update_value(0.0,0.0)
+        self.fuel_group.update_consumption(0.0)

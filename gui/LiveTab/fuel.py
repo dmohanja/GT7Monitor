@@ -6,10 +6,8 @@ class FuelGroup(QtWidgets.QGroupBox):
     def __init__(self):
         super().__init__()
         
-        # Initialize consumption calculation parameters
-        self.c1 = 0.0
-        self.c2 = 0.0
-        self.c3 = 0.0
+        # Initialize consumption and flow calculation parameters
+        self.flow = [0.0, 0.0, 0.0]
         self.last_fuel = 0.0
 
         # Define fuel group box
@@ -90,8 +88,7 @@ class FuelGroup(QtWidgets.QGroupBox):
         #self.box.addWidget(self.value)
         self.setLayout(self.grid)
 
-    def update(self,fuel,capacity):
-        
+    def update_value(self,fuel,capacity):
         # Current remaining fuel and total capacity
         self.value.display(f'{fuel:4.1f}')
         self.capacity.display(f'{capacity:4.1f}')
@@ -102,12 +99,15 @@ class FuelGroup(QtWidgets.QGroupBox):
         else:
             percent = 0.0
         self.percent.display(f'{percent:4.1f}')
-
-        # Current consumption (trailing 3 second average)
-        self.c1 = self.c2
-        self.c2 = self.c3
-        self.c3 = self.last_fuel - fuel
+    
+    def update_consumption(self,fuel):
+        # Current fuel flow (trailing 3 second average)
+        self.flow[2] = self.flow[1]
+        self.flow[1] = self.flow[0]
+        self.flow[0] = self.last_fuel - fuel
         self.last_fuel = fuel
-        #consumption = stats.mean([self.c1,self.c2,self.c3])
 
-        self.consumption.display(f'{self.c3:4.1f}')
+        flow = stats.mean([self.flow[0], self.flow[1], self.flow[2]])
+        # Only display if result is positive
+        if flow >= 0:
+            self.consumption.display(f'{flow:4.1f}')
