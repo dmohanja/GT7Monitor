@@ -103,10 +103,3 @@ tel_data = {
     'gear':0,
     'suggested_gear':0,
 }
-
-decrypted_sample = {
-    'rpm':0.0,
-    'mps':0.0,
-    'fuel_lvl':0.0,
-    'fuel_cap':0.0
-}
