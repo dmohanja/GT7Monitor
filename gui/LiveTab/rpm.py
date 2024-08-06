@@ -12,7 +12,7 @@ class RpmGroup(QtWidgets.QGroupBox):
         self.value = QtWidgets.QLCDNumber()
         self.value.setDigitCount(7)
         self.value.setSmallDecimalPoint(True)
-        self.value.setMinimumHeight(70)
+        self.value.setMinimumHeight(50)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.Outline)
         self.value.setSegmentStyle(QtWidgets.QLCDNumber.SegmentStyle.Flat)
         self.value.setStyleSheet("border-style: none;")

@@ -23,16 +23,27 @@ class MainWindow(QtWidgets.QWidget):
         self.gear_group = gear.GearGroup()
         self.fuel_group = fuel.FuelGroup()
 
-        # Add info groups to grid
+        # Create left info grid
+        self.l_info_grid = QtWidgets.QGridLayout()
+        self.l_info_grid.addWidget(self.gear_group,0,0)
+        self.l_info_grid.addWidget(self.rpm_group,1,0)
+        self.l_info_grid.setRowStretch(0,3)
+        self.l_info_grid.setRowStretch(1,2)
+
+        # Create right info grid
+        self.r_info_grid = QtWidgets.QGridLayout()
+        self.r_info_grid.addWidget(self.speed_group,0,0)
+        self.r_info_grid.addWidget(self.fuel_group,1,0)
+        self.r_info_grid.setRowStretch(0,1)
+        self.r_info_grid.setRowStretch(1,3)
+
+
+        # Add l/r info grids to main info grid
         self.info_grid = QtWidgets.QGridLayout()
-        self.info_grid.addWidget(self.rpm_group,1,0)
-        self.info_grid.addWidget(self.speed_group,1,1)
-        self.info_grid.addWidget(self.gear_group,0,0)
-        self.info_grid.addWidget(self.fuel_group,0,1)
+        self.info_grid.addLayout(self.l_info_grid,0,0)
+        self.info_grid.addLayout(self.r_info_grid,0,1)
         self.info_grid.setColumnStretch(0,1)
         self.info_grid.setColumnStretch(1,1)
-        self.info_grid.setRowStretch(0,2)
-        self.info_grid.setRowStretch(1,1)
 
         # Add buttons to grid
         self.button_grid = QtWidgets.QGridLayout()
