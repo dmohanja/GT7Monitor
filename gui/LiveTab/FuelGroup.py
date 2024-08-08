@@ -1,4 +1,3 @@
-from config import formats, settings
 from PySide6 import QtCore, QtWidgets, QtGui
 
 class FuelGroup(QtWidgets.QGroupBox):

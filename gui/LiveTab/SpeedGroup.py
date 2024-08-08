@@ -1,4 +1,4 @@
-from config import formats, settings
+from config import settings
 from PySide6 import QtCore, QtWidgets, QtGui
 
 class SpeedGroup(QtWidgets.QGroupBox):

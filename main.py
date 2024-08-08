@@ -1,7 +1,9 @@
 import multiprocessing as mp
 import logging as log
 import sys
-import rx, gui.display as display
+import rx
+from gui.MainWindow import MainWindow
+from PySide6 import QtWidgets
 from config import formats, settings
 
 if __name__ == '__main__':
@@ -27,10 +29,17 @@ if __name__ == '__main__':
     p_rx = mp.Process(target=rx.listen, args=(shared_data,lock))
     p_rx.start()
 
-    # Start the GUI process
-    display.display(shared_data,lock)
+    # Start the GUI
+    app = QtWidgets.QApplication()
+    window = MainWindow(shared_data, lock)
+    window.resize(settings.GUI_DEFAULT_RES[0], settings.GUI_DEFAULT_RES[1])
+    window.show()
+    app.exec()
 
-    # GUI must have exited, wait for comms process to finish
+    # GUI has quit. Set shared_data['stop'] to True to tell other processes to stop
+    shared_data['stop'] = True
+
+    # Wait for comms process to finish
     p_rx.join()
 
     log.debug(shared_data)

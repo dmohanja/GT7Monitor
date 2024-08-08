@@ -1,6 +1,6 @@
 from config import formats, settings
 from PySide6 import QtCore, QtWidgets, QtGui
-from gui.LiveTab import rpm, speed, gear, fuel
+from gui.LiveTab import FuelGroup, GearGroup, RpmGroup, SpeedGroup
 from gui import SimState
 
 class MainWindow(QtWidgets.QWidget):
@@ -23,10 +23,10 @@ class MainWindow(QtWidgets.QWidget):
         self.sim_state = SimState.SimState()
 
         # Initialize speed, rpm, gear and fuel groups
-        self.speed_group = speed.SpeedGroup()
-        self.rpm_group = rpm.RpmGroup()
-        self.gear_group = gear.GearGroup()
-        self.fuel_group = fuel.FuelGroup()
+        self.speed_group = SpeedGroup.SpeedGroup()
+        self.rpm_group = RpmGroup.RpmGroup()
+        self.gear_group = GearGroup.GearGroup()
+        self.fuel_group = FuelGroup.FuelGroup()
 
         # Create left info grid
         self.l_info_grid = QtWidgets.QGridLayout()
