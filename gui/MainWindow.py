@@ -1,17 +1,14 @@
 from config import formats, settings
 from PySide6 import QtCore, QtWidgets
-from gui.LiveTab import FuelGroup, GearGroup, RpmGroup, SpeedGroup
+from gui.LiveTab import FuelGroup, GearGroup, RpmGroup, SpeedGroup, LiveTab
 from gui import SimState
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self, shared_data, lock):
         super().__init__()
 
-        global data
-        data = formats.tel_data
-
         # Set window title
-        self.setWindowTitle("GT7 Telemetry Monitor")
+        self.setWindowTitle("GT7 Monitor")
 
         # Define start/stop button
         self.started = True if settings.START_ON_LAUNCH else False
@@ -22,32 +19,18 @@ class MainWindow(QtWidgets.QWidget):
         # Initialize sim state label
         self.sim_state = SimState.SimState()
 
-        # Initialize speed, rpm, gear and fuel groups
-        self.speed_group = SpeedGroup.SpeedGroup()
-        self.rpm_group = RpmGroup.RpmGroup()
-        self.gear_group = GearGroup.GearGroup()
-        self.fuel_group = FuelGroup.FuelGroup()
+        # Initialize tabs (and their widgets)
+        self.live_tab = LiveTab.LiveTab()
+        self.live_widget = QtWidgets.QWidget()
+        self.live_widget.setLayout(self.live_tab)
 
-        # Create left info grid
-        self.l_info_grid = QtWidgets.QGridLayout()
-        self.l_info_grid.addWidget(self.gear_group,0,0)
-        self.l_info_grid.addWidget(self.rpm_group,1,0)
-        self.l_info_grid.setRowStretch(0,3)
-        self.l_info_grid.setRowStretch(1,2)
+        self.empty = QtWidgets.QWidget()
 
-        # Create right info grid
-        self.r_info_grid = QtWidgets.QGridLayout()
-        self.r_info_grid.addWidget(self.speed_group,0,0)
-        self.r_info_grid.addWidget(self.fuel_group,1,0)
-        self.r_info_grid.setRowStretch(0,1)
-        self.r_info_grid.setRowStretch(1,3)
-
-        # Add l/r info grids to main info grid
-        self.info_grid = QtWidgets.QGridLayout()
-        self.info_grid.addLayout(self.l_info_grid,0,0)
-        self.info_grid.addLayout(self.r_info_grid,0,1)
-        self.info_grid.setColumnStretch(0,1)
-        self.info_grid.setColumnStretch(1,1)
+        # Add tab widgets to tab layout
+        self.tabs = QtWidgets.QTabWidget()
+        self.tabs.addTab(self.live_widget, 'LIVE')
+        self.tabs.addTab(self.empty, 'EMPTY')
+        #self.tabs.setStyleSheet("background-color: transparent")
 
         # Add button(s) and sim state to grid
         self.button_grid = QtWidgets.QGridLayout()
@@ -56,7 +39,7 @@ class MainWindow(QtWidgets.QWidget):
 
         # Add grids to main VBox layout
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.layout.addLayout(self.info_grid)
+        self.layout.addWidget(self.tabs)
         self.layout.addLayout(self.button_grid)
 
         # Connect start/stop button slot
@@ -109,8 +92,8 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.rpm_group.update_value(shared_data['rpm'])
-                    self.speed_group.update(shared_data['speed'])
+                    self.live_tab.rpm_group.update_value(shared_data['rpm'])
+                    self.live_tab.speed_group.update(shared_data['speed'])
         finally:
             lock.release()
 
@@ -121,8 +104,8 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
-                    self.gear_group.update(shared_data['gear'],shared_data['suggested_gear'])
+                    self.live_tab.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
+                    self.live_tab.gear_group.update(shared_data['gear'],shared_data['suggested_gear'])
                     self.sim_state.update(shared_data['flags'])
                     # Only the 5fps update function will set 'continue' to True/False
                     shared_data['continue'] = True
@@ -138,7 +121,7 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.fuel_group.update_value(shared_data['fuel_lvl'],shared_data['fuel_cap'])
+                    self.live_tab.fuel_group.update_value(shared_data['fuel_lvl'],shared_data['fuel_cap'])
         finally:
             lock.release()
     
@@ -149,15 +132,15 @@ class MainWindow(QtWidgets.QWidget):
         try:
             if locked:
                 if self.started:
-                    self.fuel_group.update_consumption(shared_data['fuel_lvl'])
+                    self.live_tab.fuel_group.update_consumption(shared_data['fuel_lvl'])
         finally:
             lock.release()
     
     # Zero all data
     def zero_data(self):
-        self.rpm_group.update_value(0)
-        self.rpm_group.update_gauge(0,0,0)
-        self.speed_group.update(0.0)
-        self.gear_group.update(0,0)
-        self.fuel_group.update_value(0.0,0.0)
-        self.fuel_group.update_consumption(0.0)
+        self.live_tab.rpm_group.update_value(0)
+        self.live_tab.rpm_group.update_gauge(0,0,0)
+        self.live_tab.speed_group.update(0.0)
+        self.live_tab.gear_group.update(0,0)
+        self.live_tab.fuel_group.update_value(0.0,0.0)
+        self.live_tab.fuel_group.update_consumption(0.0)

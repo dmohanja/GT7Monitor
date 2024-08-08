@@ -22,6 +22,7 @@ class RpmGroup(QtWidgets.QGroupBox):
         self.gauge_view = QtWidgets.QGraphicsView()
         self.gauge_view.setInteractive(False)
         self.gauge_view.setScene(self.gauge)
+        self.gauge_view.setStyleSheet("border-style: none; background-color: transparent;")
         self.bar_count = settings.RPM_BAR_COUNT
         self.bars = []
         self.grey_brush = QtGui.QBrush(QtCore.Qt.darkGray)
@@ -32,8 +33,6 @@ class RpmGroup(QtWidgets.QGroupBox):
         bar_gap = 2
         for i in range(0,self.bar_count):
             self.bars.append(self.gauge.addRect((i*bar_width)+(i*bar_gap),0,bar_width,bar_height,brush=self.grey_brush))
-        
-        QtWidgets.QGraphicsRectItem()
 
         # Define grid to place gauge and value
         self.grid = QtWidgets.QGridLayout()
@@ -42,6 +41,7 @@ class RpmGroup(QtWidgets.QGroupBox):
         self.grid.setRowStretch(0,5)
         self.grid.setRowStretch(0,1)
 
+        # Add grid to self
         self.setLayout(self.grid)
     
     def update_value(self, rpm):
