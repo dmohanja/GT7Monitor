@@ -1,5 +1,5 @@
 from config import settings
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets
 
 class SpeedGroup(QtWidgets.QGroupBox):
     def __init__(self):

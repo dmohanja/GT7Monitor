@@ -1,5 +1,4 @@
-from config import formats, settings
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets
 
 class SimState(QtWidgets.QFrame):
     def __init__(self):
