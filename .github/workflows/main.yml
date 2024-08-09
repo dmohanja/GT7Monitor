@@ -34,9 +34,11 @@ jobs:
           AUTHOR: "Github Actions"
           EMAIL: "dmohanja@users.noreply.github.com"
         run: |
+          md release
+          Compress-Archive ./dist/* -Destination ./release/GTMonitor.zip
           git config --global user.name "{{env.AUTHOR}}"
           git config --global user.email "{{env.EMAIL}}"
-          git add dist/*
+          git add release/GTMonitor.zip
           git commit -m "{{env.MESSAGE}}"
           git push
       
