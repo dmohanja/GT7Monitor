@@ -28,10 +28,17 @@ jobs:
       - name: Run PyInstalller
         run: pyinstaller --onedir --noconsole --name GTMonitor main.py
 
-      - name: Upload Executable
-        uses: actions/upload-artifact@v4
-        with:
-          path: dist/*
+      - name: Update Distribution Folder
+        env:
+          MESSAGE: "Automated Windows Build"
+          AUTHOR: "Github Actions"
+          EMAIL: "dmohanja@users.noreply.github.com"
+        run: |
+          git config --global user.name "{{env.AUTHOR}}"
+          git config --global user.email "{{env.EMAIL}}"
+          git add dist/*
+          git commit -m "{{env.MESSAGE}}"
+          git push
       
         
 
