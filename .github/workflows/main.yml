@@ -12,10 +12,6 @@ permissions:
 jobs:
   create-executable:
     runs-on: windows-latest
-    env:
-          MESSAGE: "Automated Windows Build"
-          AUTHOR: "Github Actions"
-          EMAIL: "dmohanja@users.noreply.github.com"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,14 +31,18 @@ jobs:
         run: pyinstaller --onedir --noconsole --name GTMonitor main.py
 
       - name: Update Release Folder
+        env:
+          MESSAGE: "Automated Windows Build"
+          AUTHOR: "Github Actions"
+          EMAIL: "dmohanja@users.noreply.github.com"
         run: |
           rm release/ -r
           md release
           Compress-Archive ./dist/* -Destination ./release/GTMonitor.zip
-          git config --global user.name ${{env.AUTHOR}}
-          git config --global user.email ${{env.EMAIL}}
+          git config --global user.name "$AUTHOR"
+          git config --global user.email "$EMAIL"
           git add release/GTMonitor.zip
-          git commit -m ${{env.MESSAGE}}
+          git commit -m "$MESSAGE"
           git push
       
         
