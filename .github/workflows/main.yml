@@ -10,7 +10,6 @@ on:
       - 'LICENCE.txt'
       - 'release/**'
       - 'dist/**'
-      - '.github/**'
 
 permissions:
   contents: write
