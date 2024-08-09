@@ -7,6 +7,8 @@ from PySide6 import QtWidgets
 from config import formats, settings
 
 if __name__ == '__main__':
+    # Needed to create executable for Windows with PyInstaller
+    mp.freeze_support()
 
     # Set log level
     if settings.DEBUG:
