@@ -1,4 +1,5 @@
-A simple reader for Gran Turismo 7's telemetry transmitted by the game via UDP
+# GT7 Monitor
+### A simple reader for Gran Turismo 7's telemetry transmitted by the game via UDP
 
 Parts of this application refer to previous work by others:
 -   Salsa20 decryption of the packet: https://github.com/lmirel/mfc/blob/master/clients/gt7racedata.py
