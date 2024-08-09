@@ -39,10 +39,10 @@ jobs:
           rm release/ -r
           md release
           Compress-Archive ./dist/* -Destination ./release/GTMonitor.zip
-          git config --global user.name "{{env.AUTHOR}}"
-          git config --global user.email "{{env.EMAIL}}"
+          git config --global user.name ${{env.AUTHOR}}
+          git config --global user.email ${{env.EMAIL}}
           git add release/GTMonitor.zip
-          git commit -m "{{env.MESSAGE}}"
+          git commit -m ${{env.MESSAGE}}
           git push
       
         
