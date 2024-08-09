@@ -18,6 +18,8 @@ jobs:
         
       - name: Setup Python
         uses: actions/setup-python@v5.1.1
+        with:
+          python-version: '3.12'
     
       - name: Install PyInstaller
         run: pip install pyinstaller
@@ -28,12 +30,13 @@ jobs:
       - name: Run PyInstalller
         run: pyinstaller --onedir --noconsole --name GTMonitor main.py
 
-      - name: Update Distribution Folder
+      - name: Update Release Folder
         env:
           MESSAGE: "Automated Windows Build"
           AUTHOR: "Github Actions"
           EMAIL: "dmohanja@users.noreply.github.com"
         run: |
+          rm release/ -r
           md release
           Compress-Archive ./dist/* -Destination ./release/GTMonitor.zip
           git config --global user.name "{{env.AUTHOR}}"
