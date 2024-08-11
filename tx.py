@@ -8,10 +8,15 @@ if settings.DEBUG:
 else:
     log.basicConfig(stream=sys.stderr, level=log.INFO)
 
-def call(shared_data):
+def call(shared_data, lock):
 
-    ip = shared_data['ip']
-    call = "Hello"
+    call_message = "Hello"
+    locked = lock.acquire()
+    try:
+        if locked:
+            ip = shared_data['ip']
+    finally:
+            lock.release()
 
     # Create socket
     try:
@@ -21,7 +26,7 @@ def call(shared_data):
     
     # Send message via UDP packet
     try:
-        sock.sendto(call.encode(), (ip, udp.GT7_PORT_TX if settings.TEST is False else udp.GT7_PORT_RX))
+        sock.sendto(call_message.encode(), (ip, udp.GT7_PORT_TX if settings.TEST is False else udp.GT7_PORT_RX))
     except socket.error as message:
         log.error("Unable to send message to " + ip \
                         + " at port " + str(udp.GT7_PORT_TX)\

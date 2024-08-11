@@ -109,9 +109,16 @@ def listen(shared_data,lock):
     redial = True
 
     while not shared_data['stop']:
-        if shared_data['continue']:
+        cont = False
+        locked = lock.acquire()
+        try:
+            if locked:
+                cont = shared_data['continue']
+        finally:
+            lock.release()
+        if cont:
             if redial:
-                tx.call(shared_data)
+                tx.call(shared_data, lock)
                 redial = False
             
             try:
@@ -144,6 +151,6 @@ def listen(shared_data,lock):
             else:
                 log.error("Insufficient data received")
         else:
-            packet_count = 801 # Temporary fix to get call() to be called again when tracking is resumed
+            redial = True # Set redial to true to trigger call() when comms resume
             time.sleep(0.5)
 
