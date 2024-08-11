@@ -12,7 +12,10 @@ class SpeedGroup(QtWidgets.QGroupBox):
         self.factor = self.kmh_factor if self.use_kmh else self.mph_factor
 
         # Define speed group box
-        self.setTitle("SPEED")
+        self.setTitle(" SPEED ")
+        font = self.font()
+        font.setItalic(True)
+        self.setFont(font)
 
         # Define speed digital display
         self.value = QtWidgets.QLCDNumber()

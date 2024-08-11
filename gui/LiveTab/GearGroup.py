@@ -5,7 +5,10 @@ class GearGroup(QtWidgets.QGroupBox):
         super().__init__()
         
         # Define gear group box
-        self.setTitle("GEAR")
+        self.setTitle(" GEAR ")
+        font = self.font()
+        font.setItalic(True)
+        self.setFont(font)
 
         # Define gear digital displays
         self.value = QtWidgets.QLCDNumber()

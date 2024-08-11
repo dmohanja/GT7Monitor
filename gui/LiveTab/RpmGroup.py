@@ -6,7 +6,10 @@ class RpmGroup(QtWidgets.QGroupBox):
         super().__init__()
 
         # Define RPM group box
-        self.setTitle("RPM")
+        self.setTitle(" RPM ")
+        font = self.font()
+        font.setItalic(True)
+        self.setFont(font)
 
         # Define RPM digital display
         self.value = QtWidgets.QLCDNumber()

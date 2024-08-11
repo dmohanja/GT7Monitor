@@ -9,7 +9,10 @@ class FuelGroup(QtWidgets.QGroupBox):
         self.last_fuel = 0.0
 
         # Define fuel group box
-        self.setTitle("FUEL")
+        self.setTitle(" FUEL ")
+        font = self.font()
+        font.setItalic(True)
+        self.setFont(font)
 
         # Define fuel digital displays
         self.value = QtWidgets.QLCDNumber()
@@ -45,9 +48,20 @@ class FuelGroup(QtWidgets.QGroupBox):
         self.capacity_txt = QtWidgets.QLabel()
         self.flow_txt = QtWidgets.QLabel()
 
+        self.value_txt.setStyleSheet("QLabel {color : grey}")
+        self.capacity_txt.setStyleSheet("QLabel {color : grey}")
+        self.flow_txt.setStyleSheet("QLabel {color : grey}")
+
         self.value_txt.setText("Remain. (%)")
         self.capacity_txt.setText("Capacity (%)")
         self.flow_txt.setText("Flow (%/sec)")
+
+        # Italics needs to be turned off because parent has it on
+        font = self.value_txt.font()
+        font.setItalic(False)
+        self.value_txt.setFont(font)
+        self.capacity_txt.setFont(font)
+        self.flow_txt.setFont(font)
 
         # Define grid to place everything
         self.grid = QtWidgets.QGridLayout()
