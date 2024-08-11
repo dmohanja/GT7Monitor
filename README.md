@@ -8,5 +8,4 @@ Parts of this application refer to previous work by others:
 >[!NOTE]
 >PlayStation local IP address can be set in config/udp.py > PS5_IP to have it set as the default IP
 
-
-https://github.com/user-attachments/assets/36388ea2-d4f2-4b8a-b924-c3fcf9c9591b
+https://github.com/user-attachments/assets/3405ee80-3594-496a-a728-d4d84a16501e
