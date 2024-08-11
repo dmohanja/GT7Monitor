@@ -1,0 +1,27 @@
+name: Ruff Linter
+
+on:
+    workflow_dispatch:
+    push:
+      branches:
+        - main
+      paths-ignore:
+        - 'README.md'
+        - 'LICENCE.txt'
+        - 'release/**'
+        - 'dist/**'
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.1
+        with:
+          python-version: '3.12'
+      
+      - name: Install Ruff
+        run: pip install ruff
+    
+      - name: Run Ruff
+        run: ruff check --output-format=github .
