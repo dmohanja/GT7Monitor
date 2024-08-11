@@ -37,7 +37,7 @@ jobs:
 
       - name: Update Release Folder
         env:
-          MESSAGE: "Automated Windows Build"
+          MESSAGE: "[Automated Windows Build]"
           AUTHOR: "Github Actions"
           EMAIL: "dmohanja@users.noreply.github.com"
         run: |
