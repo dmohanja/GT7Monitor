@@ -4,8 +4,6 @@ from config import formats, udp, settings
 from crypto import decrypt
 import tx
 
-UDP_IP = udp.LOCALHOST_IP if settings.TEST is True else udp.PS5_IP
-
 # Set log level
 if settings.DEBUG:
     log.basicConfig(stream=sys.stderr, level=log.DEBUG)
@@ -107,26 +105,33 @@ def listen(shared_data,lock):
     # Read to file continuously
     log.info("Starting to listen for UDP packets from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
 
-    tx.call()
     packet_count = 0
+    redial = True
 
     while not shared_data['stop']:
         if shared_data['continue']:
+            if redial:
+                tx.call(shared_data)
+                redial = False
+            
             try:
                 data, addr = sock.recvfrom(4096)
             except:
+                log.error("Nothing received from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
+                redial = True
+                time.sleep(0.5)
                 continue
             data = decrypt.decrypt(data)
 
             if len(data) > 0x40:
-                log.debug("Received packet from " + str(addr) + ", with this data: " + str(data))
+                log.debug("Received packet at " + str(addr) + ", with this data: " + str(data))
 
                 # Update everything
                 update_shared_data(data, shared_data, lock)
 
                 #time.sleep(1)
                 if packet_count > 800:
-                    tx.call()
+                    redial = True
                     packet_count = 0
                     data = {}
                 else:
@@ -134,10 +139,11 @@ def listen(shared_data,lock):
             
             elif settings.TEST:
                 time.sleep(0.1)
-                tx.call()
+                redial = True
                 update_shared_data(data, shared_data, lock)
             else:
                 log.error("Insufficient data received")
         else:
+            packet_count = 801 # Temporary fix to get call() to be called again when tracking is resumed
             time.sleep(0.5)
 

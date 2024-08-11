@@ -4,7 +4,7 @@ import sys
 import rx
 from gui.MainWindow import MainWindow
 from PySide6 import QtWidgets
-from config import formats, settings
+from config import formats, settings, udp
 
 if __name__ == '__main__':
     # Needed to create executable for Windows with PyInstaller
@@ -26,6 +26,8 @@ if __name__ == '__main__':
     shared_data['continue'] = True if settings.START_ON_LAUNCH else False
     # Add Stop flag to shared dict
     shared_data['stop'] = False
+    # Add IP address flag to shared dict
+    shared_data['ip'] = udp.LOCALHOST_IP if settings.TEST else udp.PS5_IP
     
     # Start the receiving process
     p_rx = mp.Process(target=rx.listen, args=(shared_data,lock))

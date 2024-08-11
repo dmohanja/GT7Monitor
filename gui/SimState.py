@@ -16,7 +16,7 @@ class SimState(QtWidgets.QFrame):
         self.state_txt.setMaximumHeight(30)
         self.state_txt.setMinimumHeight(30)
         self.state_txt.setMaximumWidth(180)
-        self.state_txt.setMinimumWidth(180)
+        self.state_txt.setMinimumWidth(160)
 
         # Define box to place text
         self.box = QtWidgets.QVBoxLayout(alignment = QtCore.Qt.AlignCenter)

@@ -2,15 +2,15 @@ import socket, sys
 import logging as log
 from config import udp, settings
 
-UDP_IP = udp.LOCALHOST_IP if settings.TEST is True else udp.PS5_IP
-
 # Set log level
 if settings.DEBUG:
     log.basicConfig(stream=sys.stderr, level=log.DEBUG)
 else:
     log.basicConfig(stream=sys.stderr, level=log.INFO)
 
-def call():
+def call(shared_data):
+
+    ip = shared_data['ip']
     call = "Hello"
 
     # Create socket
@@ -21,9 +21,8 @@ def call():
     
     # Send message via UDP packet
     try:
-        sock.sendto(call.encode(), (UDP_IP, udp.GT7_PORT_TX if settings.TEST is False else udp.GT7_PORT_RX))
+        sock.sendto(call.encode(), (ip, udp.GT7_PORT_TX if settings.TEST is False else udp.GT7_PORT_RX))
     except socket.error as message:
-        log.error("Unable to send message to " + UDP_IP \
+        log.error("Unable to send message to " + ip \
                         + " at port " + str(udp.GT7_PORT_TX)\
                                 + ". " + str(message))
-
