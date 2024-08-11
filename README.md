@@ -6,9 +6,6 @@ Parts of this application refer to previous work by others:
 -   Breakdown of the packet data: https://github.com/snipem/go-gt7-telemetry/blob/main/lib/gt7data.go
 
 >[!NOTE]
->Set the local IP address of your PlayStation in config/udp.py PS5_IP
+>PlayStation local IP address can be set in config/udp.py > PS5_IP to have it set as the default IP
 
->[!WARNING]
->The pre-built release (releases/GTMonitor.zip) will not work until a way of providing an IP address via the GUI is implemented.
-
-https://github.com/user-attachments/assets/36388ea2-d4f2-4b8a-b924-c3fcf9c9591b
+https://github.com/user-attachments/assets/3405ee80-3594-496a-a728-d4d84a16501e
