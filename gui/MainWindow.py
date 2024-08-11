@@ -142,7 +142,7 @@ class MainWindow(QtWidgets.QWidget):
                 if self.started:
                     self.live_tab.rpm_group.update_gauge(shared_data['rpm'],shared_data['rpm_redline'],shared_data['rpm_limiter'])
                     self.live_tab.gear_group.update(shared_data['gear'],shared_data['suggested_gear'])
-                    self.sim_state.update(shared_data['flags'])
+                    self.sim_state.update(shared_data['flags'],shared_data['connected'])
         finally:
             lock.release()
 

@@ -28,6 +28,8 @@ if __name__ == '__main__':
     shared_data['stop'] = False
     # Add IP address flag to shared dict
     shared_data['ip'] = udp.LOCALHOST_IP if settings.TEST else udp.PS5_IP
+    # Add connection status to shared dict
+    shared_data['connected'] = True
     
     # Start the receiving process
     p_rx = mp.Process(target=rx.listen, args=(shared_data,lock))

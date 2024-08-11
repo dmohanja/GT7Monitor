@@ -109,6 +109,8 @@ def listen(shared_data,lock):
     redial = True
 
     while not shared_data['stop']:
+        start = time.perf_counter()
+
         cont = False
         locked = lock.acquire()
         try:
@@ -126,13 +128,24 @@ def listen(shared_data,lock):
             except:
                 log.error("Nothing received from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
                 redial = True
+                locked = lock.acquire()
+                try:
+                    if locked:
+                        shared_data['connected'] = False
+                finally:
+                    lock.release()
                 time.sleep(0.5)
                 continue
             data = decrypt.decrypt(data)
 
             if len(data) > 0x40:
                 log.debug("Received packet at " + str(addr) + ", with this data: " + str(data))
-
+                locked = lock.acquire()
+                try:
+                    if locked:
+                        shared_data['connected'] = True
+                finally:
+                    lock.release()
                 # Update everything
                 update_shared_data(data, shared_data, lock)
 
@@ -153,4 +166,8 @@ def listen(shared_data,lock):
         else:
             redial = True # Set redial to true to trigger call() when comms resume
             time.sleep(0.5)
+        
+        end = time.perf_counter()
+        if packet_count != 0 and packet_count % 120 == 0:
+            log.info("Loop rate: " + f'{(1/(end-start)):.2f}' + " iter./sec")
 

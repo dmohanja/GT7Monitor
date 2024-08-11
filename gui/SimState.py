@@ -12,6 +12,7 @@ class SimState(QtWidgets.QFrame):
         self.loading_style = "QLabel { background-color : grey; border-radius : 5px; font : bold 15px; color : white}"
         self.paused_style = "QLabel { background-color : yellow; border-radius : 5px; font : bold 15px; color : black}"
         self.racing_style = "QLabel { background-color : green; border-radius : 5px; font : bold 15px; color : black}"
+        self.error_style = "QLabel { background-color : red; border-radius : 5px; font : bold 15px; color : black}"
         self.state_txt.setStyleSheet(self.idle_style)
         self.state_txt.setMaximumHeight(30)
         self.state_txt.setMinimumHeight(30)
@@ -25,15 +26,18 @@ class SimState(QtWidgets.QFrame):
         # Add grid to group
         self.setLayout(self.box)
 
-    def update(self,flags):
+    def update(self,flags,connected):
         racing = (flags & 0x1)        # Bit 1 
         paused = (flags & 0x2) >> 1   # Bit 2
         loading = (flags & 0x4) >> 2  # Bit 3
         in_gear = (flags & 0x8) >> 3  # Bit 4
 
-        # Piority: paused > racing > loading
+        # Piority: connection error > paused > racing > loading > replay > idle
         # Another possible scenario is replay mode when not racing, but in gear
-        if paused:
+        if not connected:
+            self.state_txt.setText("CONN. ERROR")
+            self.state_txt.setStyleSheet(self.error_style)
+        elif paused:
             self.state_txt.setText("PAUSED")
             self.state_txt.setStyleSheet(self.paused_style)
         elif racing:
