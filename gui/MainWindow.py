@@ -1,8 +1,8 @@
-from config import formats, settings, udp
+from config import settings, udp
 import logging as log
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
-from gui.LiveTab import FuelGroup, GearGroup, RpmGroup, SpeedGroup, LiveTab
+from gui.LiveTab import LiveTab
 from gui import SimState, IpAddress
 
 # Set log level

@@ -6,7 +6,7 @@ from gui.MainWindow import MainWindow
 from PySide6 import QtWidgets
 from config import formats, settings, udp
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Needed to create executable for Windows with PyInstaller
     mp.freeze_support()
 
@@ -23,16 +23,16 @@ if __name__ == '__main__':
     # Add telemetry data to shared dict
     shared_data.update(formats.tel_data)
     # Add Continue flag to shared dict
-    shared_data['continue'] = True if settings.START_ON_LAUNCH else False
+    shared_data["continue"] = True if settings.START_ON_LAUNCH else False
     # Add Stop flag to shared dict
-    shared_data['stop'] = False
+    shared_data["stop"] = False
     # Add IP address flag to shared dict
-    shared_data['ip'] = udp.LOCALHOST_IP if settings.TEST else udp.PS5_IP
+    shared_data["ip"] = udp.LOCALHOST_IP if settings.TEST else udp.PS5_IP
     # Add connection status to shared dict
-    shared_data['connected'] = True
-    
+    shared_data["connected"] = True
+
     # Start the receiving process
-    p_rx = mp.Process(target=rx.listen, args=(shared_data,lock))
+    p_rx = mp.Process(target=rx.listen, args=(shared_data, lock))
     p_rx.start()
 
     # Start the GUI
@@ -43,10 +43,9 @@ if __name__ == '__main__':
     app.exec()
 
     # GUI has quit. Set shared_data['stop'] to True to tell other processes to stop
-    shared_data['stop'] = True
+    shared_data["stop"] = True
 
     # Wait for comms process to finish
     p_rx.join()
 
     log.debug(shared_data)
-

@@ -1,7 +1,5 @@
-from config import formats, settings
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 from gui.LiveTab import FuelGroup, GearGroup, RpmGroup, SpeedGroup
-from gui import SimState
 
 class LiveTab(QtWidgets.QVBoxLayout):
     def __init__(self):

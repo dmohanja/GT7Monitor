@@ -9,7 +9,7 @@ MAGIC = 0x47375330
 
 def decrypt (data):
     
-    if settings.TEST == True:
+    if settings.TEST:
         return data
 
     oiv = data[0x40:0x44]
