@@ -1,7 +1,7 @@
 from config import settings, udp
 import logging as log
 import sys
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets
 from gui.LiveTab import LiveTab
 from gui import SimState, IpAddress
 

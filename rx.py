@@ -1,4 +1,7 @@
-import socket, sys, struct, time
+import socket
+import sys
+import struct
+import time
 import logging as log
 from config import formats, udp, settings
 from crypto import decrypt
@@ -122,11 +125,10 @@ def listen(shared_data,lock):
             if redial:
                 tx.call(shared_data, lock)
                 redial = False
-            
             try:
                 data, addr = sock.recvfrom(4096)
-            except:
-                log.error("Nothing received from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX))
+            except socket.error as message:
+                log.error("Nothing received from " + udp.PS5_IP + ":" + str(udp.GT7_PORT_RX) + ". " + str(message))
                 redial = True
                 locked = lock.acquire()
                 try:

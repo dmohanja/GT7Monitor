@@ -1,4 +1,5 @@
-import socket, sys
+import socket
+import sys
 import logging as log
 from config import udp, settings
 
